@@ -1,11 +1,18 @@
+import os
+from dotenv import load_dotenv
 from beanie import init_beanie
 from motor.motor_asyncio import AsyncIOMotorClient
 from backend.app.models import User
 from fastapi_users_db_beanie import BeanieUserDatabase
 
-DATABASE_URL = "mongodb://localhost:27017"
+# Load environment variables (for local development)
+load_dotenv()
+
+# Get MongoDB URL from environment variable
+DATABASE_URL = os.getenv("MONGO_URL")
 DATABASE_NAME = "trendexplore"
 
+# Create MongoDB client
 client = AsyncIOMotorClient(DATABASE_URL)
 db = client[DATABASE_NAME]
 
@@ -17,7 +24,5 @@ async def init_db():
         document_models=[User],
     )
 
-
 async def get_user_db():
     yield BeanieUserDatabase(User)
-
