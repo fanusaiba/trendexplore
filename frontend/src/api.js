@@ -1,2 +1,5 @@
-const API_BASE = "http://127.0.0.1:8000"; 
-fetch (`$ {API_BASE}/your-endpoint`)
+import axios from "axios";
+
+export const api = axios.create({
+  baseURL: "https://trendexplore.onrender.com",
+});
