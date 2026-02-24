@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Heart, Share2, Brain } from "lucide-react";
 import axios from "axios";
-
+import {api} from "../api";
 export default function TrendCard({ trend, favorites, setFavorites }) {
   const [insight, setInsight] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -24,7 +24,7 @@ export default function TrendCard({ trend, favorites, setFavorites }) {
   const analyzeTrend = async () => {
     try {
       setLoading(true);
-      const res = await axios.post("http://127.0.0.1:8000/api/analyze", {
+      const res = await api.post("/api/analyze", {
         title: trend.title,
       });
       setInsight(res.data);
