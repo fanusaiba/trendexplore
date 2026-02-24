@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { Heart, Share2, Brain } from "lucide-react";
-import axios from "axios";
 import {api} from "../api";
 export default function TrendCard({ trend, favorites, setFavorites }) {
   const [insight, setInsight] = useState(null);

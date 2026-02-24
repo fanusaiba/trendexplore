@@ -10,7 +10,7 @@ export default function Chat() {
   const joinChat = () => {
     if (!username.trim()) return;
 
-    ws.current = new WebSocket(`ws://127.0.0.1:8000/ws/${username}`);
+   ws.current = new WebSocket(`wss://trendexplore.onrender.com/ws/${username}`);
 
     ws.current.onmessage = (e) => {
       const msg = JSON.parse(e.data);
