@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
+import api from "../api";
 import CompareChart from "../components/CompareChart";
 
 export default function Compare() {
@@ -15,8 +15,7 @@ export default function Compare() {
         let allTrends = [];
 
         for (const country of countries) {
-          const res = await axios.get(
-            `http://127.0.0.1:8000/api/trends?country=${country}&category=${category}`
+          const res = await api.get(`/api/trends?country=${country}&category=${category}`
           );
 
           // Attach country label to each trend (important for chart grouping)
