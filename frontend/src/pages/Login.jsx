@@ -1,7 +1,7 @@
 import { useState, useContext } from "react";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
+import api from "../api";
 
 export default function Login() {
   const navigate = useNavigate();
@@ -16,33 +16,23 @@ export default function Login() {
     setError("");
 
     try {
-      const formData = new URLSearchParams();
-      formData.append("username", email);
-      formData.append("password", password);
+      // ✅ Send JSON to your custom backend route
+      const res = await api.post("/auth/login", {
+        email: email,
+        password: password,
+      });
 
-      // ✅ IMPORTANT: withCredentials so cookie is stored in browser
-      const res = await axios.post(
-        "http://localhost:8000/auth/jwt/login",
-        formData,
-        {
-          headers: { "Content-Type": "application/x-www-form-urlencoded" },
-          withCredentials: true,
-        }
-      );
+      console.log("LOGIN SUCCESS:", res.data);
 
-      // ✅ If backend is cookie-based, token may not exist (204 response)
-      console.log("LOGIN STATUS:", res.status);
-      console.log("LOGIN DATA:", res.data);
-
-      // ✅ Save only user
+      // ✅ Save user locally
       localStorage.setItem("user", JSON.stringify({ email }));
-      localStorage.removeItem("token"); // ✅ remove bad token
+      localStorage.removeItem("token");
 
       login({ email });
 
       navigate("/home");
     } catch (err) {
-      console.log(err);
+      console.error("LOGIN ERROR:", err);
       setError("Invalid email or password");
     }
   };
@@ -55,7 +45,11 @@ export default function Login() {
       >
         <h2 className="text-2xl font-bold mb-6 text-center">Login</h2>
 
-        {error && <p className="text-red-400 mb-3 text-sm text-center">{error}</p>}
+        {error && (
+          <p className="text-red-400 mb-3 text-sm text-center">
+            {error}
+          </p>
+        )}
 
         <input
           type="email"
