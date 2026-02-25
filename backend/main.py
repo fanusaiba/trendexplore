@@ -1,8 +1,8 @@
-from fastapi import FastAPI, WebSocket, WebSocketDisconnect, Depends
+from fastapi import FastAPI, WebSocket, WebSocketDisconnect, Depends, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from typing import Dict, List
 from textblob import TextBlob
-
+from pydantic import BaseModel
 import asyncio
 import random
 from datetime import datetime
@@ -232,3 +232,24 @@ def analyze_trend(data: dict):
 
     summary = f"This trend reflects growing public interest in '{title.split()[0]}'."
     return {"title": title, "sentiment": sentiment, "summary": summary}
+
+class User(BaseModel):
+    email: str
+    password: str
+
+
+@app.post("/auth/register")
+def register(user: User):
+    # For now simple response (we will improve later)
+    return {
+        "message": "User registered successfully",
+        "email": user.email
+    }
+@app.post("/auth/login")
+def login(user: User):
+    # Dummy login validation
+    return {
+        "message": "Login successful",
+        "email": user.email
+    }
+
