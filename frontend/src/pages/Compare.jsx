@@ -1,11 +1,10 @@
 import { useEffect, useState } from "react";
-import api from "./api";
+import api from "../api";
 import CompareChart from "../components/CompareChart";
 
 export default function Compare() {
   const [trends, setTrends] = useState([]);
   const [loading, setLoading] = useState(false);
-
   useEffect(() => {
     const fetchAllTrends = async () => {
       setLoading(true);
