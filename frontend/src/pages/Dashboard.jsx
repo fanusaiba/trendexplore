@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { api } from "../api";
+import api  from "../api";
 
 export default function Dashboard() {
   const [data, setData] = useState(null);
