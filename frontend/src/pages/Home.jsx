@@ -3,8 +3,8 @@ import axios from "axios";
 import countries from "../data/countries";
 import { AuthContext } from "../context/AuthContext";
 
-const API_BASE = "http://localhost:8000";
-const WS_BASE = "ws://localhost:8000";
+const API_BASE = import.meta.env.VITE_API_BASE;
+const WS_BASE = import.meta.env.VITE_WS_BASE;
 
 // Always send cookies
 axios.defaults.withCredentials = true;
