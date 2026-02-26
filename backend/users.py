@@ -41,8 +41,9 @@ async def get_user_manager(
 cookie_transport = CookieTransport(
     cookie_name="trend_auth",
     cookie_max_age=3600,
+    cookie_secure=True,        # REQUIRED for HTTPS (Render)
+    cookie_samesite="none",    # REQUIRED for cross-domain (Vercel → Render)
 )
-
 
 # =========================
 # JWT strategy
