@@ -43,6 +43,7 @@ cookie_transport = CookieTransport(
     cookie_max_age=3600,
     cookie_secure=True,        # REQUIRED for HTTPS (Render)
     cookie_samesite="none",    # REQUIRED for cross-domain (Vercel → Render)
+    cookie_path="/"
 )
 
 # =========================
