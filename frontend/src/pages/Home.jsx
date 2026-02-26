@@ -175,12 +175,14 @@ const openPrivateChat = (otherEmail) => {
 useEffect(() => {
   const loadMessages = async () => {
     const res = await axios.get(
-      `http://localhost:8000/api/rooms/${room}/messages`,
-      { withCredentials: true }
-    );
+  `${API_BASE}/api/rooms/${room}/messages`,
+  { withCredentials: true }
+);
 
     setMessages(res.data);
   };
+
+
 
   loadMessages();
 }, [room]);
