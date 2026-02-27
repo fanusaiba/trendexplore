@@ -16,25 +16,30 @@ export default function Login() {
     setError("");
 
     try {
-      // ✅ Send JSON to your custom backend route
-      const res = await api.post("/auth/login", {
-        email: email,
-        password: password,
-      });
-
-      console.log("LOGIN SUCCESS:", res.data);
-
-      // ✅ Save user locally
-      localStorage.setItem("user", JSON.stringify({ email }));
-      localStorage.removeItem("token");
-
-      login({ email });
-
-      navigate("/home");
-    } catch (err) {
-      console.error("LOGIN ERROR:", err);
-      setError("Invalid email or password");
+  // ✅ FastAPI Users cookie login (FORM data)
+  const res = await api.post(
+    "/auth/jwt/login",
+    new URLSearchParams({
+      username: email,
+      password: password,
+    }),
+    {
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      withCredentials: true, // IMPORTANT: allow cookies
     }
+  );
+
+  console.log("LOGIN SUCCESS:", res.data);
+
+  // ✅ Don't store token in localStorage if you're using cookies
+  localStorage.setItem("user", JSON.stringify({ email }));
+
+  login({ email });
+  navigate("/home");
+} catch (err) {
+  console.error("LOGIN ERROR:", err);
+  setError("Invalid email or password");
+}
   };
 
   return (
@@ -75,6 +80,13 @@ export default function Login() {
         >
           Log In
         </button>
+        <p className="text-sm text-gray-400 mt-4 text-center">
+  Don’t have an account?{" "}
+  <Link to="/signup" className="text-blue-400 hover:underline">
+    Sign up
+  </Link>
+</p>
+
       </form>
     </div>
   );

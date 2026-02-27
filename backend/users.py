@@ -70,8 +70,8 @@ auth_backend = AuthenticationBackend(
 # =========================
 
 fastapi_users = FastAPIUsers[User, str](
-    get_user_manager,
-    [auth_backend],
+    get_user_manager=UserManager,
+    auth_backends=[auth_backend],
 )
 
 # Current user dependency
