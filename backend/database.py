@@ -1,28 +1,31 @@
 import os
-from dotenv import load_dotenv
-from beanie import init_beanie
 from motor.motor_asyncio import AsyncIOMotorClient
-from backend.app.models import User
+from beanie import init_beanie
 from fastapi_users_db_beanie import BeanieUserDatabase
+from backend.app.models import User
 
-# Load environment variables (for local development)
-load_dotenv()
+client = None
+db = None
 
-# Get MongoDB URL from environment variable
-DATABASE_URL = os.getenv("MONGO_URL")
-DATABASE_NAME = "trendexplore"
-
-# Create MongoDB client
-client = AsyncIOMotorClient(DATABASE_URL)
-db = client[DATABASE_NAME]
-
-messages_collection = db["messages"]
 
 async def init_db():
+    global client, db
+
+    mongo_url = os.getenv("MONGO_URL")
+
+    if not mongo_url:
+        raise ValueError("MONGO_URL is not set")
+
+    client = AsyncIOMotorClient(mongo_url)
+    db = client["trendexplore"]
+
     await init_beanie(
         database=db,
         document_models=[User],
     )
+
+    print("✅ MongoDB connected successfully")
+
 
 async def get_user_db():
     yield BeanieUserDatabase(User)

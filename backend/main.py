@@ -6,12 +6,16 @@ from pydantic import BaseModel
 import asyncio
 import random
 from datetime import datetime
-from jose import jwk,JWTError
+from jose import jwt,JWTError
 
 # ✅ Local imports
 from .database import init_db, messages_collection
 from .users import fastapi_users, current_user, auth_backend
 from .schemas import UserRead, UserCreate
+import os
+from motor.motor_asyncio import AsyncIOMotorClient
+from beanie import init_beanie
+from backend.app.models import User
 
 SECRET = "this_is_my_super_secret_key_that_is_very_long_12345"
 
@@ -20,10 +24,12 @@ app = FastAPI(title="TrendExplore API")
 
 
 @app.on_event("startup")
-async def on_startup():
-    await init_db()
-    asyncio.create_task(simulate_trend_updates())
-
+async def app_init():
+    client = AsyncIOMotorClient(os.getenv("MONGO_URL"))
+    await init_beanie(
+        database=client["trendexplore"],
+        document_models=[User]
+    )
 
 # 🌐 CORS Setup
 app.add_middleware(
