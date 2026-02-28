@@ -6,12 +6,14 @@ from pydantic import BaseModel
 import asyncio
 import random
 from datetime import datetime
+from jose import jwk,JWTError
 
 # ✅ Local imports
 from .database import init_db, messages_collection
 from .users import fastapi_users, current_user, auth_backend
 from .schemas import UserRead, UserCreate
 
+SECRET = "this_is_my_super_secret_key_that_is_very_long_12345"
 
 # 🚀 App Initialization
 app = FastAPI(title="TrendExplore API")
@@ -121,8 +123,33 @@ class ConnectionManager:
 manager = ConnectionManager()
 
 
-@app.websocket("/ws/{username}")
-async def websocket_endpoint(websocket: WebSocket, username: str):
+@app.websocket("/ws")
+async def websocket_endpoint(websocket: WebSocket):
+
+    # Accept connection first
+    await websocket.accept()
+
+    # Get JWT cookie
+    token = websocket.cookies.get("trend_auth")
+
+    if not token:
+        await websocket.close(code=1008)
+        return
+
+    # Validate JWT
+    try:
+        payload = jwt.decode(token, SECRET, algorithms=["HS256"])
+        username = payload.get("sub")
+
+        if not username:
+            await websocket.close(code=1008)
+            return
+
+    except JWTError:
+        await websocket.close(code=1008)
+        return
+
+    # Connect user to manager
     await manager.connect(websocket, username)
 
     try:
@@ -130,50 +157,43 @@ async def websocket_endpoint(websocket: WebSocket, username: str):
             data = await websocket.receive_json()
             action = data.get("action")
 
-            # ✅ join room
+            # ===============================
+            # KEEP YOUR EXISTING LOGIC HERE
+            # (join_room, send_message, etc.)
+            # ===============================
+
             if action == "join_room":
                 room = data.get("room", "global")
-                if websocket not in manager.rooms.setdefault(room, []):
-                    manager.rooms[room].append(websocket)
+                manager.rooms.setdefault(room, [])
+                manager.rooms[room].append(websocket)
 
-                await manager.broadcast(room, {"type": "info", "msg": f"{username} joined {room}"})
+                await manager.broadcast(
+                    room,
+                    {
+                        "type": "info",
+                        "msg": f"{username} joined {room}"
+                    }
+                )
 
-            # ✅ send message
             elif action == "message":
                 room = data.get("room", "global")
-                text = data.get("text", "")
-                to = data.get("to")  # for private
+                text = data.get("text")
 
                 msg = {
                     "type": "message",
-                    "from": username,
-                    "text": text,
-                    "room": room,
-                    "to": to,
-                    "timestamp": datetime.utcnow().isoformat()
-                }
-
-                # ✅ Save into MongoDB
-                await messages_collection.insert_one({
                     "room": room,
                     "sender": username,
                     "text": text,
-                    "to": to,
-                    "timestamp": datetime.utcnow()
-                })
+                }
 
-                # ✅ Private message
-                if to:
-                    await manager.send_personal(to, msg)
-                    await manager.send_personal(username, msg)
-                else:
-                    await manager.broadcast(room, msg)
+                await manager.broadcast(room, msg)
 
     except WebSocketDisconnect:
         manager.disconnect(username)
-        await manager.broadcast("global", {"type": "leave", "username": username})
-
-
+        await manager.broadcast(
+            "global",
+            {"type": "leave", "username": username}
+)
 # ✅ Chat history API
 @app.get("/api/rooms/{room_name}/messages")
 async def get_room_messages(room_name: str):
