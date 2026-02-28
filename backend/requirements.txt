@@ -1,9 +1,24 @@
-fastapi
-uvicorn
+fastapi==0.110.0
+uvicorn[standard]==0.29.0
+
+# Database
 beanie==1.23.6
-motor
-python-jose[cryptography]
-passlib[bcrypt]
-bcrypt
-textblob
-python-dotenv
+motor==3.3.2
+
+# Authentication
+fastapi-users[beanie]==12.1.2
+python-jose[cryptography]==3.3.0
+passlib[bcrypt]==1.7.4
+bcrypt==4.1.2
+
+# Environment variables
+python-dotenv==1.0.1
+
+# NLP
+textblob==0.17.1
+
+# External APIs
+pytrends==4.9.2
+requests==2.31.0
+praw==7.7.1
+tweepy==4.14.0
