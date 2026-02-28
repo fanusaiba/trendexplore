@@ -10,7 +10,7 @@ from jose import jwt,JWTError
 
 # ✅ Local imports
 from .database import init_db, messages_collection
-from .users import fastapi_users, current_user, auth_backend
+from .users import  current_user, auth_backend
 from .schemas import UserRead, UserCreate
 import os
 from motor.motor_asyncio import AsyncIOMotorClient

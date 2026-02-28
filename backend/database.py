@@ -3,7 +3,7 @@ from dotenv import load_dotenv
 from motor.motor_asyncio import AsyncIOMotorClient
 from beanie import init_beanie
 from backend.app.models.user import User
-
+from fastapi_users.db import BeanieUserDatabase
 load_dotenv()
 
 DATABASE_URL = os.getenv("MONGO_URL")

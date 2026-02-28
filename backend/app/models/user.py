@@ -1,5 +1,6 @@
 from beanie import Document
 from pydantic import EmailStr
+from fastapi_users.db import BeanieUserDatabase
 
 class User(Document):
     email: EmailStr
