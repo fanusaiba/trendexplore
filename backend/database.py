@@ -1,10 +1,22 @@
 import os
+from dotenv import load_dotenv
 from motor.motor_asyncio import AsyncIOMotorClient
 from beanie import init_beanie
 from backend.app.models.user import User
 
+load_dotenv()
+
+DATABASE_URL = os.getenv("MONGO_URL")
+DATABASE_NAME = "trendexplore"
+
+client = AsyncIOMotorClient(DATABASE_URL)
+db = client[DATABASE_NAME]
+
+# ✅ ADD THIS BACK
+messages_collection = db["messages"]
 
 async def init_db():
-    client = AsyncIOMotorClient(os.getenv("MONGO_URL"))
-    db = client["trendexplore"]
-    await init_beanie(database=db, document_models=[User])
+    await init_beanie(
+        database=db,
+        document_models=[User],
+    )

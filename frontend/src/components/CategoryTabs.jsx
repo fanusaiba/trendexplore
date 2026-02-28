@@ -1,5 +1,3 @@
-
-
 export default function CategoryTabs({ category, setCategory }) {
   const categories = ["All", "Google", "Reddit", "Twitter", "News"];
 

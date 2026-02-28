@@ -24,12 +24,8 @@ app = FastAPI(title="TrendExplore API")
 
 
 @app.on_event("startup")
-async def app_init():
-    client = AsyncIOMotorClient(os.getenv("MONGO_URL"))
-    await init_beanie(
-        database=client["trendexplore"],
-        document_models=[User]
-    )
+async def startup():
+    await init_db()
 
 # 🌐 CORS Setup
 app.add_middleware(
