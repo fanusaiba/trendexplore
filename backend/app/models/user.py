@@ -1,13 +1,7 @@
-from beanie import Document
-from pydantic import EmailStr
-from fastapi_users.db import BeanieUserDatabase
+from fastapi_users_db_beanie import BeanieBaseUser
+from beanie import PydanticObjectId
 
-class User(Document):
-    email: EmailStr
-    hashed_password: str
-    is_active: bool = True
-    is_superuser: bool = False
-    is_verified: bool = False
 
+class User(BeanieBaseUser[PydanticObjectId]):
     class Settings:
         name = "users"
