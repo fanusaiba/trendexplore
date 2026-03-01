@@ -1,7 +1,7 @@
 from fastapi_users_db_beanie import BeanieBaseUser
-from beanie import PydanticObjectId
+from beanie import Document
 
 
-class User(BeanieBaseUser[PydanticObjectId]):
+class User(BeanieBaseUser,Documents):
     class Settings:
         name = "users"
