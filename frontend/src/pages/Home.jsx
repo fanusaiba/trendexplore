@@ -176,7 +176,7 @@ useEffect(() => {
   const loadMessages = async () => {
     const res = await axios.get(
   `${API_BASE}/api/rooms/${room}/messages`,
-  { withCredentials: true }
+  { withCredentials: False }
 );
 
     setMessages(res.data);

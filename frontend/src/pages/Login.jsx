@@ -25,7 +25,7 @@ export default function Login() {
     }),
     {
       headers: { "Content-Type": "application/x-www-form-urlencoded" },
-      withCredentials: true, // IMPORTANT: allow cookies
+      // IMPORTANT: allow cookies
     }
   );
 
