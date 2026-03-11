@@ -20,7 +20,6 @@ export default function Signup() {
     try {
       const res = await api.post("/auth/register", {
         email: email,
-        username: username,
         password: password,
       });
 
