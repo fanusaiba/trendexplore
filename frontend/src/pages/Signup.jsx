@@ -1,5 +1,5 @@
 import { useState } from "react";
-import  api from "../api";
+import api from "../api";
 import { useNavigate, Link } from "react-router-dom";
 
 export default function Signup() {
@@ -8,38 +8,48 @@ export default function Signup() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     setError("");
     setSuccess("");
 
     try {
       const res = await api.post("/auth/register", {
-        email,
-        username,
-        password,
+        email: email,
+        username: username,
+        password: password,
       });
 
       if (res.status === 201) {
         setSuccess("Account created successfully!");
-        setTimeout(() => navigate("/login"), 1500);
+
+        setTimeout(() => {
+          navigate("/login");
+        }, 1500);
       }
-    } catch  {
-      setError("Signup failed. Try a different email or username.");
+    } catch (err) {
+      console.error(err);
+      setError("Signup failed. Try another email or username.");
     }
   };
 
   return (
     <div className="flex justify-center items-center min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-blue-900 text-white">
       <div className="bg-gray-800 p-8 rounded-xl shadow-xl w-96">
-        <h2 className="text-2xl font-bold mb-6 text-center text-blue-400">Create Account</h2>
+
+        <h2 className="text-2xl font-bold mb-6 text-center text-blue-400">
+          Create Account
+        </h2>
 
         {error && <p className="text-red-400 mb-3 text-sm">{error}</p>}
         {success && <p className="text-green-400 mb-3 text-sm">{success}</p>}
 
         <form onSubmit={handleSubmit} className="space-y-4">
+
           <div>
             <label className="block text-sm text-gray-300 mb-1">Email</label>
             <input
@@ -79,12 +89,16 @@ export default function Signup() {
           >
             Sign Up
           </button>
+
         </form>
 
         <p className="text-sm text-gray-400 mt-4 text-center">
           Already have an account?{" "}
-          <Link to="/login" className="text-blue-400 hover:underline">Log in</Link>
+          <Link to="/login" className="text-blue-400 hover:underline">
+            Log in
+          </Link>
         </p>
+
       </div>
     </div>
   );

@@ -1,5 +1,5 @@
 import { useState, useContext } from "react";
-import { useNavigate, Link} from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
 import api from "../api";
 
@@ -16,30 +16,32 @@ export default function Login() {
     setError("");
 
     try {
-  // ✅ FastAPI Users cookie login (FORM data)
-  const res = await api.post(
-    "/auth/jwt/login",
-    new URLSearchParams({
-      username: email,
-      password: password,
-    }),
-    {
-      headers: { "Content-Type": "application/x-www-form-urlencoded" },
-      // IMPORTANT: allow cookies
+      const res = await api.post(
+        "/auth/jwt/login",
+        new URLSearchParams({
+          username: email,
+          password: password,
+        }),
+        {
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
+          withCredentials: true,   // ✅ IMPORTANT
+        }
+      );
+
+      console.log("LOGIN SUCCESS:", res.data);
+
+      // Save basic user info locally
+      localStorage.setItem("user", JSON.stringify({ email }));
+
+      login({ email });
+
+      navigate("/home");
+    } catch (err) {
+      console.error("LOGIN ERROR:", err);
+      setError(err.response?.data?.detail || "Invalid email or password");
     }
-  );
-
-  console.log("LOGIN SUCCESS:", res.data);
-
-  // ✅ Don't store token in localStorage if you're using cookies
-  localStorage.setItem("user", JSON.stringify({ email }));
-
-  login({ email });
-  navigate("/home");
-} catch (err) {
-  console.error("LOGIN ERROR:", err);
-  setError("Invalid email or password");
-}
   };
 
   return (
@@ -80,13 +82,13 @@ export default function Login() {
         >
           Log In
         </button>
-        <p className="text-sm text-gray-400 mt-4 text-center">
-  Don’t have an account?{" "}
-  <Link to="/signup" className="text-blue-400 hover:underline">
-    Sign up
-  </Link>
-</p>
 
+        <p className="text-sm text-gray-400 mt-4 text-center">
+          Don’t have an account?{" "}
+          <Link to="/signup" className="text-blue-400 hover:underline">
+            Sign up
+          </Link>
+        </p>
       </form>
     </div>
   );
