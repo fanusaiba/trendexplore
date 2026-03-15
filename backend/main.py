@@ -19,18 +19,14 @@ app = FastAPI(title="TrendExplore API")
 # ---------------------------
 # CORS (IMPORTANT)
 # ---------------------------
-origins = [
-    "https://trendexplore.vercel.app",
-    "http://localhost:5173",
-    
-]
+
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
-    allow_credentials=True,
+    allow_origins=["*"],
     allow_methods=["*"],
     allow_headers=["*"],
+    allow_credentials=False,
 )
 
 # ---------------------------
