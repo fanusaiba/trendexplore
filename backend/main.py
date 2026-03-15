@@ -16,13 +16,9 @@ SECRET = os.getenv("SECRET", "change_me")
 
 app = FastAPI(title="TrendExplore API")
 
-
-@app.on_event("startup")
-async def startup():
-    await init_db()
-
-
-
+# ---------------------------
+# CORS (IMPORTANT)
+# ---------------------------
 origins = [
     "https://trendexplore.vercel.app",
     "http://localhost:5173",
@@ -32,18 +28,28 @@ origins = [
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
-    allow_credentials= True,
+    allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
+# ---------------------------
+# STARTUP
+# ---------------------------
+@app.on_event("startup")
+async def startup():
+    await init_db()
 
-# Auth routes
+
+# ---------------------------
+# AUTH ROUTES
+# ---------------------------
 app.include_router(
     fastapi_users.get_auth_router(auth_backend),
     prefix="/auth/jwt",
     tags=["auth"],
 )
+
 app.include_router(
     fastapi_users.get_register_router(UserRead, UserCreate),
     prefix="/auth",
@@ -51,11 +57,17 @@ app.include_router(
 )
 
 
+# ---------------------------
+# ROOT
+# ---------------------------
 @app.get("/")
 def root():
     return {"message": "TrendExplore backend running 🚀"}
 
 
+# ---------------------------
+# TRENDS API
+# ---------------------------
 @app.get("/api/trends")
 def get_trends(
     country: str = "US",
@@ -67,16 +79,18 @@ def get_trends(
         {"title": "Apple Vision Pro 2", "source": "Google", "country": "US", "score": 90},
         {"title": "OpenAI vs Google war", "source": "News", "country": "UK", "score": 85},
     ]
+
     filtered = [
         t for t in data
         if (category == "All" or t["source"] == category)
         and t["country"] == country
     ]
+
     return {"user": user.email, "trends": filtered}
 
 
 # ---------------------------
-# WebSocket Chat
+# WEBSOCKET CHAT
 # ---------------------------
 class ConnectionManager:
     def __init__(self):
@@ -111,6 +125,7 @@ async def websocket_endpoint(websocket: WebSocket):
     await websocket.accept()
 
     token = websocket.cookies.get("trend_auth")
+
     if not token:
         await websocket.close(code=1008)
         return
@@ -118,9 +133,11 @@ async def websocket_endpoint(websocket: WebSocket):
     try:
         payload = jwt.decode(token, SECRET, algorithms=["HS256"])
         username = payload.get("sub")
+
         if not username:
             await websocket.close(code=1008)
             return
+
     except JWTError:
         await websocket.close(code=1008)
         return
@@ -136,7 +153,13 @@ async def websocket_endpoint(websocket: WebSocket):
                 room = data.get("room", "global")
                 text = data.get("text", "")
 
-                msg = {"type": "message", "room": room, "sender": username, "text": text}
+                msg = {
+                    "type": "message",
+                    "room": room,
+                    "sender": username,
+                    "text": text
+                }
+
                 await manager.broadcast(room, msg)
 
     except WebSocketDisconnect:
@@ -144,11 +167,15 @@ async def websocket_endpoint(websocket: WebSocket):
         await manager.broadcast("global", {"type": "leave", "username": username})
 
 
+# ---------------------------
+# CHAT HISTORY
+# ---------------------------
 @app.get("/api/rooms/{room_name}/messages")
 async def get_room_messages(room_name: str):
     cursor = messages_collection.find({"room": room_name}).sort("timestamp", 1)
 
     results = []
+
     async for msg in cursor:
         results.append({
             "from": msg.get("sender"),
@@ -156,12 +183,17 @@ async def get_room_messages(room_name: str):
             "to": msg.get("to"),
             "timestamp": msg.get("timestamp").isoformat() if msg.get("timestamp") else None
         })
+
     return results
 
 
+# ---------------------------
+# TREND SENTIMENT
+# ---------------------------
 @app.post("/api/analyze")
 def analyze_trend(data: dict):
     title = data.get("title", "")
+
     if not title:
         return {"error": "No title provided"}
 
@@ -176,4 +208,9 @@ def analyze_trend(data: dict):
         sentiment = "Neutral 😐"
 
     summary = f"This trend reflects growing public interest in '{title.split()[0]}'."
-    return {"title": title, "sentiment": sentiment, "summary": summary}
+
+    return {
+        "title": title,
+        "sentiment": sentiment,
+        "summary": summary
+    }
