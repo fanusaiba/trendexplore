@@ -1,6 +1,7 @@
+from uuid import UUID, uuid4
+
 from beanie import Document
 from fastapi_users_db_beanie import BeanieBaseUser
-from uuid import UUID, uuid4
 from pydantic import Field
 
 
@@ -9,3 +10,4 @@ class User(BeanieBaseUser, Document):
 
     class Settings:
         name = "users"
+        email_collation = {"locale": "en", "strength": 2}

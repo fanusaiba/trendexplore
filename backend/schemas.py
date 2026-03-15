@@ -1,9 +1,10 @@
+from uuid import UUID
+
 from fastapi_users import schemas
 from pydantic import EmailStr
-from typing import Optional
 
 
-class UserRead(schemas.BaseUser[str]):
+class UserRead(schemas.BaseUser[UUID]):
     email: EmailStr
     is_active: bool
     is_superuser: bool
@@ -16,5 +17,4 @@ class UserCreate(schemas.BaseUserCreate):
 
 
 class UserUpdate(schemas.BaseUserUpdate):
-    email: Optional[EmailStr] = None
-    password: Optional[str] = None
+    pass

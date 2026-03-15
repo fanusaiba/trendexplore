@@ -1,8 +1,9 @@
 import os
-from dotenv import load_dotenv
-from motor.motor_asyncio import AsyncIOMotorClient
+
 from beanie import init_beanie
+from dotenv import load_dotenv
 from fastapi_users_db_beanie import BeanieUserDatabase
+from motor.motor_asyncio import AsyncIOMotorClient
 
 from app.models.user import User
 
