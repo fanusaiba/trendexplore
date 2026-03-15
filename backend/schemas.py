@@ -1,10 +1,20 @@
 from fastapi_users import schemas
-from beanie import PydanticObjectId
+from pydantic import EmailStr
+from typing import Optional
 
 
-class UserRead(schemas.BaseUser[PydanticObjectId]):
-    username: str
+class UserRead(schemas.BaseUser[str]):
+    email: EmailStr
+    is_active: bool
+    is_superuser: bool
+    is_verified: bool
 
 
 class UserCreate(schemas.BaseUserCreate):
-    username: str
+    email: EmailStr
+    password: str
+
+
+class UserUpdate(schemas.BaseUserUpdate):
+    email: Optional[EmailStr] = None
+    password: Optional[str] = None
