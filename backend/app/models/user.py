@@ -1,5 +1,5 @@
 from beanie import Document
-from fastapi_users.db import BeanieBaseUser
+from fastapi_users_db_beanie import BeanieBaseUser
 from pydantic import Field
 from typing import Optional
 from uuid import UUID, uuid4
