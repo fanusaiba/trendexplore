@@ -1,0 +1,4 @@
+{
+  "python.defaultInterpreterPath": "C:\\Users\\Guest User\\Desktop\\trendexplore\\backend\\venv\\Scripts\\python.exe",
+  "python.analysis.extraPaths": ["./backend"]
+}

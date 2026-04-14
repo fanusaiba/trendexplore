@@ -1,0 +1,27 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* 🌈 Custom global styles */
+body {
+  @apply bg-gray-50 text-gray-800;
+  font-family: 'Inter', sans-serif;
+}
+
+/* Navbar styling */
+nav {
+  @apply bg-white shadow-md p-4 flex justify-between items-center sticky top-0 z-50;
+}
+
+/* Reusable button */
+.btn {
+  @apply px-4 py-2 rounded-lg font-semibold transition hover:scale-105;
+}
+
+.btn-primary {
+  @apply bg-blue-600 text-white hover:bg-blue-700;
+}
+
+.btn-outline {
+  @apply border border-blue-500 text-blue-600 hover:bg-blue-100;
+}
